@@ -211,7 +211,7 @@ dotfiles/
 │
 ├── bin/                   # Custom scripts (optional)
 │
-└── archive/               # Old reference materials
+└── _archive/              # Old reference materials
 ```
 
 ## 🛠️ What Gets Installed

@@ -82,7 +82,6 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(
     git
     zsh-syntax-highlighting
-    fasd
     z
     tmux
     tmuxinator
@@ -166,7 +165,6 @@ alias pkill="fkill"
 alias npm-lemon="npm --userconfig ~/.npmrc-lemon"
 alias npm-tak="npm --userconfig ~/.npmrc-tak"
 alias emulator="/Users/tak/library/Android/sdk/emulator/emulator"
-alias pkill="fkill"
 alias json="fx"
 
 #alias aic2="./dist/cli.mjs"
@@ -183,7 +181,7 @@ eval "$(pyenv init -)"
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
-export JAVA_HOME=${/usr/libexec/java_home}  # @24.07.31 rn 설치하면서 아래 추가
+export JAVA_HOME=$(/usr/libexec/java_home)  # @24.07.31 rn 설치하면서 아래 추가
 #jenv add /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator

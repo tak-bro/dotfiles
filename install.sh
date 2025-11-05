@@ -62,8 +62,6 @@ install_homebrew() {
 
     if command -v brew &>/dev/null; then
         print_success "Homebrew already installed"
-        print_info "Updating Homebrew..."
-        brew update
     else
         print_info "Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
