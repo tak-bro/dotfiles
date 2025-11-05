@@ -1,0 +1,29 @@
+# SSH Configuration Template
+# Copy this to ~/.ssh/config and update with your actual key paths
+
+# Default Github (Personal)
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+
+# Work/Secondary GitHub Account
+# Uncomment and configure if you have multiple GitHub accounts
+# Host github.com-work
+#   HostName github.com
+#   User git
+#   PreferredAuthentications publickey
+#   IdentityFile ~/.ssh/id_ed25519_work
+
+# Example: Personal projects on secondary account
+# Host github.com-personal
+#   HostName github.com
+#   User git
+#   PreferredAuthentications publickey
+#   IdentityFile ~/.ssh/id_ed25519_personal
+
+# Common SSH settings
+Host *
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentitiesOnly yes

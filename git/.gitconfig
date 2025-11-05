@@ -1,0 +1,13 @@
+[user]
+	name = tak
+	email = env.tak@gmail.com
+[core]
+	precomposeunicode = true
+	quotepath = false
+[help]
+	autocorrect = 1
+[push]
+	autoSetupRemote = true
+[include]
+	# Load local customizations (not tracked in git)
+	path = ~/.gitconfig.local
