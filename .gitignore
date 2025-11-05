@@ -25,16 +25,37 @@ Temporary Items
 
 # Local customization (not tracked)
 *.local
+!tmux/.tmux.conf.local
 .extra
 .env
 .env.*
 
-# Sensitive information
-.ssh/
+# Sensitive information - NEVER COMMIT THESE
+.ssh/id_*
+.ssh/*.pem
+.ssh/known_hosts
+.ssh/authorized_keys
 .aws/
 .gnupg/
 *.pem
 *.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# API Keys and Tokens
+.npmrc
+.npmrc-*
+.yarnrc
+*_history
+.netrc
+.pypirc
+
+# Environment files
+.env
+.env.*
+!.env.example
 
 # Editor backup files
 *~

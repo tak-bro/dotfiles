@@ -157,7 +157,7 @@ setup_dotfiles() {
     BACKUP_DIR="$HOME/.dotfiles.backup.$(date +%Y%m%d_%H%M%S)"
     mkdir -p "$BACKUP_DIR"
 
-    for file in .zshrc .p10k.zsh .gitconfig; do
+    for file in .zshrc .p10k.zsh .gitconfig .tmux.conf .tmux.conf.local; do
         if [ -f "$HOME/$file" ]; then
             mv "$HOME/$file" "$BACKUP_DIR/"
             print_info "Backed up $file"
@@ -169,6 +169,8 @@ setup_dotfiles() {
     ln -sf "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
     ln -sf "$DOTFILES_DIR/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
     ln -sf "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
+    ln -sf "$DOTFILES_DIR/tmux/.tmux.conf" "$HOME/.tmux.conf"
+    ln -sf "$DOTFILES_DIR/tmux/.tmux.conf.local" "$HOME/.tmux.conf.local"
 
     # Neovim config
     if [ -d "$HOME/.config/nvim" ]; then
@@ -178,6 +180,26 @@ setup_dotfiles() {
 
     mkdir -p "$HOME/.config"
     ln -sf "$DOTFILES_DIR/nvim/config" "$HOME/.config/nvim"
+
+    # Karabiner config
+    if [ -f "$DOTFILES_DIR/karabiner/karabiner.json" ]; then
+        mkdir -p "$HOME/.config/karabiner"
+        if [ -f "$HOME/.config/karabiner/karabiner.json" ]; then
+            mv "$HOME/.config/karabiner/karabiner.json" "$BACKUP_DIR/karabiner.json"
+            print_info "Backed up Karabiner config"
+        fi
+        ln -sf "$DOTFILES_DIR/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
+        print_info "Linked Karabiner config"
+    fi
+
+    # SSH config template
+    if [ ! -f "$HOME/.ssh/config" ] && [ -f "$DOTFILES_DIR/ssh/config.template" ]; then
+        mkdir -p "$HOME/.ssh"
+        cp "$DOTFILES_DIR/ssh/config.template" "$HOME/.ssh/config"
+        chmod 600 "$HOME/.ssh/config"
+        print_info "Created SSH config from template"
+        print_info "⚠️  Remember to update ~/.ssh/config with your actual SSH keys"
+    fi
 
     print_success "Dotfiles symlinked"
     print_info "Backup saved to: $BACKUP_DIR"
@@ -248,9 +270,12 @@ main() {
     echo "  4. Review manual setup steps in README.md"
     echo ""
     print_info "Manual configurations needed:"
-    echo "  - Sign in to applications (Warp, Notion, etc.)"
-    echo "  - Configure SSH keys for GitHub"
+    echo "  - Update ~/.ssh/config with your actual SSH key paths"
+    echo "  - Sign in to applications (Warp, Notion, Slack, etc.)"
+    echo "  - Configure SSH keys for GitHub (see ssh/README.md)"
+    echo "  - Install manual apps: Whale, Arc, Cursor, IntelliJ, Figma, etc."
     echo "  - Set up browser extensions"
+    echo "  - Configure Karabiner-Elements keyboard mappings"
     echo "  - Configure app-specific settings"
     echo ""
 }

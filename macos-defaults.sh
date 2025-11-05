@@ -61,10 +61,10 @@ print_success "General UI/UX configured"
 print_info "Configuring Dock..."
 
 # Automatically hide and show the Dock
-defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide -bool false
 
 # Set Dock icon size
-defaults write com.apple.dock tilesize -int 36
+defaults write com.apple.dock tilesize -int 40
 
 # Don't show recent applications in Dock
 defaults write com.apple.dock show-recents -bool false

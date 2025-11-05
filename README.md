@@ -75,6 +75,20 @@ dotfiles/
 ├── nvim/
 │   └── config/            # Neovim (LazyVim) configuration
 │
+├── tmux/
+│   ├── .tmux.conf         # Tmux configuration
+│   └── .tmux.conf.local   # Tmux local customization
+│
+├── ssh/
+│   ├── config.template    # SSH config template
+│   └── README.md          # SSH setup guide
+│
+├── karabiner/
+│   └── karabiner.json     # Keyboard customization
+│
+├── vscode/
+│   └── README.md          # VS Code setup guide
+│
 ├── bin/                   # Custom scripts (optional)
 │
 └── archive/               # Old reference materials
@@ -173,13 +187,16 @@ brew bundle dump --force
 
 Some things can't be automated and require manual configuration:
 
-### 1. SSH Keys for GitHub
+### 1. SSH Configuration
 
+See detailed guide in `ssh/README.md`
+
+**Quick setup:**
 ```bash
 # Generate SSH key
 ssh-keygen -t ed25519 -C "env.tak@gmail.com"
 
-# Start ssh-agent and add key
+# Add key to ssh-agent
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
 
@@ -189,28 +206,86 @@ pbcopy < ~/.ssh/id_ed25519.pub
 # Add to GitHub: https://github.com/settings/ssh/new
 ```
 
-### 2. Application Sign-ins
+**Multiple GitHub accounts:**
+The `~/.ssh/config` template is already created. Update it with your actual key paths.
+See `ssh/README.md` for detailed multi-account setup.
 
+### 2. Applications to Install Manually
+
+Some applications cannot be installed via Homebrew and must be installed manually:
+
+**Browsers:**
+- [Whale](https://whale.naver.com/) - Naver Whale browser
+- [Arc](https://arc.net/) - Modern browser (optional)
+- Chrome/Safari - Built-in or from website
+
+**Development Tools:**
+- [Cursor](https://cursor.sh/) - AI-powered code editor
+- [IntelliJ IDEA](https://www.jetbrains.com/idea/) - Java/Kotlin IDE (or use JetBrains Toolbox)
+- [Android Studio](https://developer.android.com/studio) - Android development
+
+**Design & Collaboration:**
+- [Figma](https://www.figma.com/) - Design tool
+- [Zeplin](https://zeplin.io/) - Design handoff tool
+
+**AI Tools:**
+- [Claude](https://claude.ai/) - Anthropic's AI assistant
+- [ChatGPT](https://chat.openai.com/) - OpenAI's AI assistant
+- [Ollama](https://ollama.ai/) - Run LLMs locally
+
+**Communication & Productivity:**
+- [Notion](https://www.notion.so/) - Note-taking (or install from App Store)
+- [KakaoTalk](https://www.kakaocorp.com/service/KakaoTalk) - Korean messenger (App Store)
+
+**From Mac App Store:**
+- Xcode
+- Pages, Numbers, Keynote (if needed)
+
+### 3. Application Sign-ins
+
+After installation, sign in to:
 - Warp / iTerm2
-- Browser (Whale, Chrome)
+- Browsers (Whale, Chrome, Arc)
 - Notion
-- macOS App Store apps
+- Slack
+- GitHub Desktop (if using)
+- VS Code / Cursor (for Settings Sync)
 
-### 3. Browser Extensions
+### 4. Browser Extensions
 
-**Chrome/Whale**
-- Octotree (GitHub code tree)
-- Pushbullet
-- Video Speed Controller
-- 30 Seconds of Knowledge
+**Chrome/Whale/Arc:**
+- [Octotree](https://www.octotree.io/) - GitHub code tree
+- [Pushbullet](https://www.pushbullet.com/) - Cross-device notifications
+- [Video Speed Controller](https://github.com/igrigorik/videospeed) - Control video playback
+- [30 Seconds of Knowledge](https://30secondsofknowledge.com/) - Developer tips on new tab
 
-### 4. Application-Specific Settings
+### 5. Application-Specific Settings
 
-- **Spectacle**: Configure hotkeys
-  - Fullscreen: `Cmd + Option + Enter`
-- **Cornercal**: Add to Login Items
-- **Finder**: Add `workspace` folder to sidebar
-- **VS Code**: Install extensions, sync settings
+**Spectacle:**
+- Configure hotkeys in Preferences
+- Recommended: Fullscreen = `Cmd + Option + Enter`
+
+**Cornercal:**
+- Add to Login Items (System Preferences → Users & Groups → Login Items)
+
+**Karabiner-Elements:**
+- Configuration file is already linked from `karabiner/karabiner.json`
+- Open Karabiner-Elements to verify settings
+- Customize keyboard mappings as needed
+
+**Finder:**
+- Add `workspace` folder to sidebar (drag folder to sidebar)
+- Preferences → Sidebar → Select desired locations
+
+**VS Code/Cursor:**
+- See `vscode/README.md` for extension setup
+- Enable Settings Sync for automatic sync across machines
+- Or manually install extensions listed in Brewfile
+
+**tmux:**
+- Configuration is already linked
+- Customize `~/.tmux.conf.local` for personal preferences
+- Based on [gpakosz/.tmux](https://github.com/gpakosz/.tmux)
 
 ## 🔄 Updating
 

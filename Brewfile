@@ -121,16 +121,48 @@ brew "lucaspickering/tap/slumber"
 # ============================================
 # GUI Applications
 # ============================================
+
+# Terminals
 cask "warp"                    # Modern terminal
-cask "spectacle"               # Window management
-cask "docker-desktop"          # Docker GUI
-cask "cornercal"               # Calendar in menu bar
+cask "iterm2"                  # Feature-rich terminal
+
+# Productivity & Utilities
+cask "alfred"                  # Launcher & productivity
+cask "spectacle"               # Window management (or use Rectangle as free alternative)
+cask "hiddenbar"               # Hide menu bar items
 cask "maccy"                   # Clipboard manager
+cask "cornercal"               # Calendar in menu bar
+cask "karabiner-elements"      # Keyboard customization
 cask "openinterminal-lite"     # Open terminal from Finder
+
+# Browsers
+# cask "arc"                   # Modern browser (install manually from website)
+# cask "google-chrome"         # Chrome browser
+# Note: Whale browser must be installed manually
+
+# Communication
+cask "slack"                   # Team communication
+# cask "notion"                # Note-taking (install from App Store or website)
+# cask "kakaotalk"             # Korean messenger (install from App Store)
+
+# Development Tools
+cask "visual-studio-code"      # Code editor
+# cask "cursor"                # AI-powered code editor (install manually)
+cask "docker-desktop"          # Docker GUI
+cask "dbeaver-community"       # Database management
+cask "postman"                 # API testing
 cask "ngrok"                   # Tunneling service
 
-# Development Tools (GUI)
-cask "dbeaver-community"       # Database management
+# Design & Collaboration
+# cask "figma"                 # Design tool (install manually or from website)
+# cask "zeplin"                # Design handoff (install manually)
+
+# IDEs
+# cask "intellij-idea"         # Java/Kotlin IDE (install manually or via JetBrains Toolbox)
+# cask "android-studio"        # Android development (install manually)
+
+# AI Tools
+# Note: Claude, ChatGPT, Ollama apps - install manually from respective websites
 
 # Mobile Development
 cask "android-platform-tools"
