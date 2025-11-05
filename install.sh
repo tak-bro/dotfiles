@@ -142,13 +142,47 @@ install_nvm() {
         print_success "NVM already installed"
     else
         print_info "Installing NVM..."
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
         print_success "NVM installed"
     fi
 }
 
+install_nodejs_and_global_packages() {
+    print_header "8. Installing Node.js and Global Packages"
+
+    # Load NVM
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+    if ! command -v nvm &>/dev/null; then
+        print_error "NVM not found. Please install NVM first."
+        exit 1
+    fi
+
+    # Check if Node.js is already installed
+    if command -v node &>/dev/null; then
+        print_success "Node.js $(node --version) already installed"
+    else
+        print_info "Installing Node.js LTS..."
+        nvm install --lts
+        nvm use --lts
+        print_success "Node.js LTS installed"
+    fi
+
+    # Install global packages
+    print_info "Installing global npm packages..."
+
+    # Check if fkill-cli is already installed
+    if npm list -g fkill-cli &>/dev/null; then
+        print_success "fkill-cli already installed"
+    else
+        npm install -g fkill-cli
+        print_success "fkill-cli installed"
+    fi
+}
+
 setup_dotfiles() {
-    print_header "8. Setting Up Dotfiles"
+    print_header "9. Setting Up Dotfiles"
 
     # Backup existing dotfiles
     print_info "Backing up existing dotfiles..."
@@ -204,7 +238,7 @@ setup_dotfiles() {
 }
 
 setup_fzf() {
-    print_header "9. Setting Up fzf"
+    print_header "10. Setting Up fzf"
 
     if [ -f ~/.fzf.zsh ]; then
         print_success "fzf already configured"
@@ -216,7 +250,7 @@ setup_fzf() {
 }
 
 apply_macos_defaults() {
-    print_header "10. Applying macOS Defaults"
+    print_header "11. Applying macOS Defaults"
 
     if [ -f "$DOTFILES_DIR/macos-defaults.sh" ]; then
         print_info "Applying macOS system preferences..."
@@ -253,6 +287,7 @@ main() {
     install_zsh_plugins
     install_powerlevel10k
     install_nvm
+    install_nodejs_and_global_packages
     setup_dotfiles
     setup_fzf
     apply_macos_defaults
@@ -264,8 +299,7 @@ main() {
     print_info "Next steps:"
     echo "  1. Restart your terminal or run: source ~/.zshrc"
     echo "  2. Configure Powerlevel10k: p10k configure"
-    echo "  3. Install Node.js: nvm install --lts"
-    echo "  4. Review manual setup steps in README.md"
+    echo "  3. Review manual setup steps in README.md"
     echo ""
     print_info "Manual configurations needed:"
     echo "  - Update ~/.ssh/config with your actual SSH key paths"
