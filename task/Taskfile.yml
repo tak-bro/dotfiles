@@ -1,0 +1,432 @@
+version: '3'
+
+silent: true
+
+vars:
+  # 공통 워크스페이스 경로
+  WS_LEMON: /Users/tak/workspace/lemoncloud
+  WS_SLP: /Users/tak/workspace/slp
+  # Claude Code (brew cask 설치 경로)
+  CLAUDE_BIN: /opt/homebrew/bin/claude
+  CLAUDE_FLAGS: '--dangerously-skip-permissions'
+  # git sync 기준 브랜치
+  BASE_BRANCH: develop
+
+tasks:
+  # ============================================
+  # 기본 태스크 — `task` 만 치면 목록 표시
+  # ============================================
+  default:
+    desc: 사용 가능한 프로젝트 목록 표시
+    cmds:
+      - task --list
+
+  # ============================================
+  # 3분할 프로젝트
+  # ┌─────────────────────────┐
+  # │       Claude Code       │
+  # ├────────────┬────────────┤
+  # │   서버     │    쉘      │
+  # └────────────┴────────────┘
+  # ============================================
+  eureka:
+    aliases: [ek]
+    desc: eureka-flows-front
+    cmds:
+      - task: _sync_and_open
+        vars:
+          REPO: "{{.WS_LEMON}}/codes/eureka-flows-front"
+          DEV_CMD: yarn web:start
+          PKG_MGR: yarn
+          LAYOUT: _layout3
+
+  ssocio:
+    aliases: [ss]
+    desc: ssocio
+    cmds:
+      - task: _sync_and_open
+        vars:
+          REPO: "{{.WS_LEMON}}/codes/ssocio"
+          DEV_CMD: yarn dev
+          PKG_MGR: yarn
+          LAYOUT: _layout3
+
+  slp-admin2:
+    aliases: [sa2]
+    desc: slp-front-desktop admin2
+    cmds:
+      - task: _sync_and_open
+        vars:
+          REPO: "{{.WS_SLP}}/slp-front-desktop"
+          DEV_CMD: yarn admin2:start
+          PKG_MGR: yarn
+          LAYOUT: _layout3
+
+  slp-kiosk:
+    aliases: [sk]
+    desc: slp-front-desktop kiosk
+    cmds:
+      - task: _sync_and_open
+        vars:
+          REPO: "{{.WS_SLP}}/slp-front-desktop"
+          DEV_CMD: yarn kiosk-renderer:start
+          PKG_MGR: yarn
+          LAYOUT: _layout3
+
+  slp-plus:
+    aliases: [sp]
+    desc: slp-front-mobile plus (react native)
+    cmds:
+      - task: _sync_and_open
+        vars:
+          REPO: "{{.WS_SLP}}/slp-front-mobile"
+          DEV_CMD: yarn plus:start
+          PKG_MGR: yarn
+          LAYOUT: _layout3
+
+  slp-app:
+    aliases: [sapp]
+    desc: ssocio2-front-app
+    cmds:
+      - task: _sync_and_open
+        vars:
+          REPO: "{{.WS_SLP}}/ssocio2-front-app"
+          DEV_CMD: pnpm web:start
+          PKG_MGR: pnpm
+          LAYOUT: _layout3
+
+  slp-admin:
+    aliases: [sa]
+    desc: ssocio2-front-admin
+    cmds:
+      - task: _sync_and_open
+        vars:
+          REPO: "{{.WS_SLP}}/ssocio2-front-admin"
+          DEV_CMD: yarn start
+          PKG_MGR: yarn
+          LAYOUT: _layout3
+
+  # ============================================
+  # 4분할-A 프로젝트
+  # ┌─────────────────────────────────────────┐
+  # │           Claude Code                   │
+  # ├─────────────┬─────────────┬─────────────┤
+  # │   서버1     │   서버2     │    쉘       │
+  # └─────────────┴─────────────┴─────────────┘
+  # ============================================
+  # (현재 사용하는 프로젝트 없음 — 필요시 아래처럼 추가)
+  # my-project:
+  #   desc: my-project
+  #   cmds:
+  #     - task: _sync_and_open
+  #       vars:
+  #         REPO: "{{.WS_LEMON}}/my-project"
+  #         DEV_CMD1: yarn web:start
+  #         DEV_CMD2: yarn admin:start
+  #         PKG_MGR: yarn
+  #         LAYOUT: _layout4a
+
+  # ============================================
+  # 4분할-B 프로젝트
+  # ┌─────────────────────────────────┐
+  # │         Claude Code             │
+  # ├────────────────┬────────────────┤
+  # │    서버1       │                │
+  # ├────────────────┤      쉘        │
+  # │    서버2       │                │
+  # └────────────────┴────────────────┘
+  # ============================================
+  chatic:
+    aliases: [ch]
+    desc: chatic-front
+    cmds:
+      - task: _sync_and_open
+        vars:
+          REPO: "{{.WS_LEMON}}/chatic/chatic-front"
+          DEV_CMD1: yarn web:start
+          DEV_CMD2: yarn admin:start
+          PKG_MGR: yarn
+          LAYOUT: _layout4b
+
+  codes:
+    aliases: [cd]
+    desc: codes-front
+    cmds:
+      - task: _sync_and_open
+        vars:
+          REPO: "{{.WS_LEMON}}/codes/codes-front"
+          DEV_CMD1: pnpm web:start
+          DEV_CMD2: pnpm admin:start
+          PKG_MGR: pnpm
+          LAYOUT: _layout4b
+
+  # ============================================
+  # 유틸리티 태스크
+  # ============================================
+  kill:
+    desc: 모든 dev server 포트 정리 (3000-3999)
+    cmds:
+      - |
+        echo "🔍 3000-6000 포트 스캔 중..."
+        lsof -ti:3000-6000 | xargs kill -9 2>/dev/null && echo "✅ 정리 완료" || echo "ℹ️  실행 중인 서버 없음"
+
+  # ============================================
+  # 내부 태스크 — git sync
+  # ============================================
+  _git_sync:
+    internal: true
+    desc: develop 최신화 후 현재 브랜치에 rebase
+    requires:
+      vars: [REPO, PKG_MGR]
+    cmds:
+      - |
+        cd {{.REPO}}
+        CURRENT=$(git rev-parse --abbrev-ref HEAD)
+        STASHED=false
+
+        # ── 헬퍼 함수 ──
+
+        # lock 파일 변경 시에만 install
+        maybe_install() {
+          local BEFORE="$1" AFTER="$2"
+          if git diff --name-only "$BEFORE" "$AFTER" 2>/dev/null | grep -qE '(pnpm-lock\.yaml|yarn\.lock|package-lock\.json)'; then
+            echo "📦 lock 파일 변경 감지 — {{.PKG_MGR}} install"
+            {{.PKG_MGR}} install
+          else
+            echo "⏭️  lock 파일 변경 없음 — install 생략"
+          fi
+        }
+
+        # stash 복원 (충돌 시 stash를 절대 잃지 않음)
+        restore_stash() {
+          if [ "$STASHED" = true ]; then
+            if git stash pop; then
+              echo "📦 stash 복원 완료"
+            else
+              echo "⚠️  stash pop 충돌 — stash 보존됨"
+              echo "   git stash show  로 내용 확인"
+              echo "   git stash pop   으로 수동 복원"
+              # 충돌난 partial merge만 정리, stash는 그대로 남아있음
+              git reset --merge 2>/dev/null
+            fi
+          fi
+        }
+
+        # ── stash (공통 — untracked 파일 포함) ──
+        HAS_CHANGES=false
+        if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+          HAS_CHANGES=true
+        fi
+
+        if [ "$HAS_CHANGES" = true ]; then
+          if git stash push -u -m "auto-stash before sync [$(date +%H:%M:%S)]"; then
+            STASHED=true
+            echo "📦 변경사항 stash 완료 (untracked 포함)"
+          else
+            echo "⚠️  stash 실패 — 동기화 생략 (작업 보존)"
+            exit 0
+          fi
+        fi
+
+        # ── develop 브랜치인 경우 ──
+        if [ "$CURRENT" = "{{.BASE_BRANCH}}" ]; then
+          echo "📌 이미 {{.BASE_BRANCH}} 브랜치 — pull만 실행"
+          BEFORE=$(git rev-parse HEAD)
+          if git pull --rebase; then
+            AFTER=$(git rev-parse HEAD)
+            maybe_install "$BEFORE" "$AFTER"
+            echo "✅ {{.BASE_BRANCH}} 최신화 완료"
+          else
+            echo "⚠️  pull 충돌 — rebase 중단"
+            git rebase --abort 2>/dev/null
+          fi
+          restore_stash
+          exit 0
+        fi
+
+        # ── 다른 브랜치인 경우 ──
+        echo "🔄 $CURRENT → {{.BASE_BRANCH}} 동기화 시작"
+
+        # 1) develop 체크아웃
+        if ! git checkout {{.BASE_BRANCH}} 2>/dev/null; then
+          echo "⚠️  {{.BASE_BRANCH}} 체크아웃 실패 — 동기화 생략"
+          restore_stash
+          exit 0
+        fi
+
+        # 2) develop pull
+        BEFORE=$(git rev-parse HEAD)
+        if ! git pull --rebase; then
+          echo "⚠️  pull 충돌 — rebase 중단, 원래 브랜치로 복귀"
+          git rebase --abort 2>/dev/null
+          if ! git checkout "$CURRENT"; then
+            echo "❌ $CURRENT 브랜치 복귀 실패 — stash 수동 복원 필요"
+            echo "   git checkout $CURRENT && git stash pop"
+            exit 0
+          fi
+          restore_stash
+          exit 0
+        fi
+        AFTER=$(git rev-parse HEAD)
+        maybe_install "$BEFORE" "$AFTER"
+        echo "✅ {{.BASE_BRANCH}} 최신화 완료"
+
+        # 3) 원래 브랜치로 복귀
+        if ! git checkout "$CURRENT"; then
+          echo "❌ $CURRENT 브랜치 복귀 실패 — stash 수동 복원 필요"
+          echo "   git checkout $CURRENT && git stash pop"
+          exit 0
+        fi
+
+        # 4) rebase
+        echo "🔀 {{.BASE_BRANCH}} 기반으로 rebase 중..."
+        if git rebase {{.BASE_BRANCH}}; then
+          echo "✅ rebase 성공"
+        else
+          echo "⚠️  rebase 충돌 — 자동 중단, rebase 생략"
+          git rebase --abort 2>/dev/null
+        fi
+
+        echo "🎉 $CURRENT 브랜치 동기화 완료"
+        restore_stash
+
+  # ============================================
+  # 내부 태스크 — sync 후 레이아웃 열기 (디스패처)
+  # ============================================
+  _sync_and_open:
+    internal: true
+    requires:
+      vars: [REPO, PKG_MGR, LAYOUT]
+    preconditions:
+      - sh: test -d {{.REPO}}
+        msg: "❌ 디렉토리가 없습니다: {{.REPO}}"
+    cmds:
+      - task: _git_sync
+        vars:
+          REPO: "{{.REPO}}"
+          PKG_MGR: "{{.PKG_MGR}}"
+        ignore_error: true
+      - task: "{{.LAYOUT}}"
+        vars:
+          REPO: "{{.REPO}}"
+          DEV_CMD: "{{.DEV_CMD}}"
+          DEV_CMD1: "{{.DEV_CMD1}}"
+          DEV_CMD2: "{{.DEV_CMD2}}"
+      - task: _notify
+        vars:
+          MSG: "{{.REPO | base}} 준비 완료!"
+
+  # ============================================
+  # 내부 태스크 — macOS 알림
+  # ============================================
+  _notify:
+    internal: true
+    requires:
+      vars: [MSG]
+    cmds:
+      - |
+        if command -v terminal-notifier &>/dev/null; then
+          terminal-notifier -title "Task" -message "{{.MSG}}" -sound Glass -group task
+        else
+          osascript -e 'display notification "{{.MSG}}" with title "Task" sound name "Glass"'
+        fi
+
+  # ============================================
+  # 내부 레이아웃 태스크
+  # ============================================
+  _layout3:
+    internal: true
+    requires:
+      vars: [REPO, DEV_CMD]
+    cmds:
+      - |
+        osascript <<EOF
+        tell application "iTerm2"
+          tell current window
+            set newTab to (create tab with default profile)
+
+            tell current session of newTab
+              write text "cd {{.REPO}} && {{.CLAUDE_BIN}} {{.CLAUDE_FLAGS}}"
+
+              set bottomSession to (split horizontally with default profile)
+
+              tell bottomSession
+                write text "cd {{.REPO}} && {{.DEV_CMD}}"
+
+                set rightSession to (split vertically with default profile)
+                tell rightSession
+                  write text "cd {{.REPO}}"
+                end tell
+              end tell
+            end tell
+          end tell
+        end tell
+        EOF
+
+  _layout4a:
+    internal: true
+    requires:
+      vars: [REPO, DEV_CMD1, DEV_CMD2]
+    cmds:
+      - |
+        osascript <<EOF
+        tell application "iTerm2"
+          tell current window
+            set newTab to (create tab with default profile)
+
+            tell current session of newTab
+              write text "cd {{.REPO}} && {{.CLAUDE_BIN}} {{.CLAUDE_FLAGS}}"
+
+              set bottomSession to (split horizontally with default profile)
+
+              tell bottomSession
+                write text "cd {{.REPO}} && {{.DEV_CMD1}}"
+
+                set midSession to (split vertically with default profile)
+                tell midSession
+                  write text "cd {{.REPO}} && {{.DEV_CMD2}}"
+
+                  set rightSession to (split vertically with default profile)
+                  tell rightSession
+                    write text "cd {{.REPO}}"
+                  end tell
+                end tell
+              end tell
+            end tell
+          end tell
+        end tell
+        EOF
+
+  _layout4b:
+    internal: true
+    requires:
+      vars: [REPO, DEV_CMD1, DEV_CMD2]
+    cmds:
+      - |
+        osascript <<EOF
+        tell application "iTerm2"
+          tell current window
+            set newTab to (create tab with default profile)
+
+            tell current session of newTab
+              write text "cd {{.REPO}} && {{.CLAUDE_BIN}} {{.CLAUDE_FLAGS}}"
+
+              set bottomSession to (split horizontally with default profile)
+
+              tell bottomSession
+                write text "cd {{.REPO}} && {{.DEV_CMD1}}"
+
+                set rightSession to (split vertically with default profile)
+                tell rightSession
+                  write text "cd {{.REPO}}"
+                end tell
+
+                set bottomLeftSession to (split horizontally with default profile)
+                tell bottomLeftSession
+                  write text "cd {{.REPO}} && {{.DEV_CMD2}}"
+                end tell
+              end tell
+            end tell
+          end tell
+        end tell
+        EOF

@@ -189,7 +189,7 @@ setup_dotfiles() {
     BACKUP_DIR="$HOME/.dotfiles.backup.$(date +%Y%m%d_%H%M%S)"
     mkdir -p "$BACKUP_DIR"
 
-    for file in .zshrc .p10k.zsh .gitconfig .tmux.conf .tmux.conf.local; do
+    for file in .zshrc .p10k.zsh .gitconfig .tmux.conf .tmux.conf.local Taskfile.yml; do
         if [ -f "$HOME/$file" ]; then
             mv "$HOME/$file" "$BACKUP_DIR/"
             print_info "Backed up $file"
@@ -203,6 +203,7 @@ setup_dotfiles() {
     ln -sf "$DOTFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
     ln -sf "$DOTFILES_DIR/tmux/.tmux.conf" "$HOME/.tmux.conf"
     ln -sf "$DOTFILES_DIR/tmux/.tmux.conf.local" "$HOME/.tmux.conf.local"
+    ln -sf "$DOTFILES_DIR/task/Taskfile.yml" "$HOME/Taskfile.yml"
 
     # Neovim config
     if [ -d "$HOME/.config/nvim" ]; then

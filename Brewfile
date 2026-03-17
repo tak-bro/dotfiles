@@ -53,6 +53,7 @@ brew "yarn"
 brew "pnpm"
 brew "watchman"        # File watching service
 brew "pre-commit"      # Git hook framework
+brew "go-task"         # Task runner
 brew "act"             # Run GitHub Actions locally
 brew "scc"             # Code counter
 
